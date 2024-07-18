@@ -2,7 +2,7 @@
   <div class="track-info-card">
     <h2 class="track-code">
       Трек-код:
-      <span class="track24highlight">{{ props.trackInfo.tracking_number }}</span>
+      <span class="trackhighlight">{{ props.trackInfo.tracking_number }}</span>
     </h2>
     <div class="info-item status-item">
       <p>Статусы:</p>
@@ -54,7 +54,7 @@ console.log(props);
   font-weight: bold;
 }
 
-.track24highlight {
+.trackhighlight {
   color: var(--gdeposylkacolor);
 }
 
