@@ -68,12 +68,14 @@ app.on('window-all-closed', () => {
   }
 })
 
-const apiKey = 'e4c867170cf5d6309b9180c67d182544'
+const apiKeyTrack24 = 'e4c867170cf5d6309b9180c67d182544'
+const apiKeyGdePosylka =
+  'cd9127350ceb559f60b475e432e367be6b7c4ee4c5ef443aeee46876d5d2b3ad8d2134390e95192b'
 
-async function checkTrack(track) {
+async function checkTrack24(track) {
   try {
     const response = await fetch(
-      `https://api.track24.ru/tracking.json.php?apiKey=${apiKey}&domain=localhost&pretty=true&code=${track}`
+      `https://api.track24.ru/tracking.json.php?apiKey=${apiKeyTrack24}&domain=localhost&pretty=true&code=${track}`
     )
     const data = await response.json()
     console.log(data)
@@ -83,18 +85,45 @@ async function checkTrack(track) {
     throw error
   }
 }
+async function checkGdePosylka(track) {
+  try {
+    const responseSlug = await fetch(`https://gdeposylka.ru/api/v4/tracker/detect/${track}`, {
+      headers: {
+        'X-Authorization-Token': apiKeyGdePosylka,
+        'Content-Type': 'application/json'
+      }
+    })
 
-// function readDir(dir) {
-//   return new Promise((resolve, reject) => {
-//     fs.readdir(dir, { withFileTypes: true }, (err, files) => {
-//       if (err) {
-//         return reject(err)
-//       }
-//       resolve(files.filter((e) => e.isFile()).map((e) => e.name))
-//     })
-//   })
-// }
+    if (!responseSlug.ok) {
+      throw new Error(`HTTP error! status: ${responseSlug.status}`)
+    }
 
-// ipcMain.handle('dir', (_, dir) => readDir(dir))
-// readDir('.').then(console.log)
-ipcMain.handle('checkTrack', (_, track) => checkTrack(track))
+    const slugData = await responseSlug.json()
+
+    if (!slugData.data || slugData.data.length === 0 || !slugData.data[0].courier) {
+      throw new Error('Invalid response format or no courier data')
+    }
+
+    const slug = slugData.data[0].courier.slug
+    console.log(responseSlug)
+
+    const response = await fetch(`https://gdeposylka.ru/api/v4/tracker/${slug}/${track}`, {
+      headers: {
+        'X-Authorization-Token': apiKeyGdePosylka,
+        'Content-Type': 'application/json'
+      }
+    })
+
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Error fetching track data:', error)
+    return {
+      status: 'error',
+      message: 'Не удалось получить данные отслеживания: ' + error.message
+    }
+  }
+}
+
+ipcMain.handle('checkTrack24', (_, track) => checkTrack24(track))
+ipcMain.handle('checkGdePosylka', (_, track) => checkGdePosylka(track))

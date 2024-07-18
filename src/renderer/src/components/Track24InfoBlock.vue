@@ -1,7 +1,8 @@
 <template>
   <div class="track-info-card">
     <h2 class="track-code">
-      Трек-код: <span>{{ props.trackInfo.trackCode }}</span>
+      Трек-код:
+      <span class="track24highlight">{{ props.trackInfo.trackCode }}</span>
     </h2>
     <div class="info-grid">
       <div class="info-item">
@@ -89,7 +90,10 @@ console.log(props);
 
 .track-code span {
   font-weight: bold;
-  color: #007bff;
+}
+
+.track24highlight {
+  color: var(--track24color);
 }
 
 .info-grid {
@@ -101,12 +105,6 @@ console.log(props);
 .info-item {
   display: flex;
   align-items: center;
-}
-
-.info-item i {
-  margin-right: 10px;
-  color: #007bff;
-  font-size: 1.2rem;
 }
 
 .info-item p {
@@ -126,12 +124,13 @@ console.log(props);
 }
 
 .status-list {
-  position: relative;
   list-style-type: none;
   padding: 10px;
 }
 
 .status-entry {
+  position: relative;
+
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
 
   border-radius: 4px;
