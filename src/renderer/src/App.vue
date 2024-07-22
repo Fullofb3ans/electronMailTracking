@@ -54,15 +54,15 @@ const checkTrack = () => {
       class="info-container"
       :class="{ trackColorBackground: apiTrack24, gdeColorBackground: !apiTrack24 }"
     >
-      <Track24InfoBlock v-if="trackInfo && apiTrack24 == true" :trackInfo="trackInfo" />
-      <TrackGdeInfoBlock v-if="trackInfo && apiTrack24 == false" :trackInfo="trackInfo" />
+      <Track24InfoBlock v-if="trackInfo && apiTrack24" :trackInfo="trackInfo" />
+      <TrackGdeInfoBlock v-if="trackInfo && !apiTrack24" :trackInfo="trackInfo" />
       <div v-else-if="errorMsg" class="preview-info">
         <p>{{ errorMsg.message ?? errorMsg.message }}</p>
         <p>{{ errorMsg.limits ? "Лимит в минуту: " + errorMsg.limits.minute : "" }}</p>
         <p>{{ errorMsg.limits ? "Лимит в день: " + errorMsg.limits.day : "" }}</p>
         <p>{{ errorMsg.limits ? "Лимит в месяц: " + errorMsg.limits.month : "" }}</p>
       </div>
-      <div v-else class="preview-info">
+      <div v-if="!trackInfo" class="preview-info">
         <p>Здесь появится информация о посылке...</p>
       </div>
       <div v-if="loader == true" class="loader-container">
